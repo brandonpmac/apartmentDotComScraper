@@ -1,0 +1,23 @@
+# scrape.py
+
+This is a python file that pulls data from an apartments.com link and adds the data to a specified google sheets
+
+## Arguments
+-l, --link, LINK        (Optional)  
+    Defines the apartments.com to link. Only with work if the netloc is www.apartments.com
+
+-u, --update, UPDATE    (Optional, Default = 'no')
+    if 'yes' is passed, the program will parse through the google sheets file and update every website with up to date data
+
+## launch.json configs
+Link only - 403 West
+    Tests: If the program can parse through the an apartments.com link and successfully write to the google sheets
+    "args": ["--link","https://www.apartments.com/403-west-raleigh-nc/4n6l61k/"]
+
+Link only - Incompatible
+    Tests: If the program can detect and incompatible link and raise an exception
+    "args": ["--link","https://docs.python.org/3/library/typing.html"]
+
+Update only
+    Tests: If the program can update the google sheets without a link being specified
+    "args": ["--update","yes"]

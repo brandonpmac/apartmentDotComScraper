@@ -14,6 +14,15 @@
             "args": ["--link","https://www.apartments.com/403-west-raleigh-nc/4n6l61k/"]
         },
         {
+            "name": "Link Only - non apartment.com",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["--link","https://docs.python.org/3/library/typing.html"]
+        },
+        {
             "name": "Update Only",
             "type": "python",
             "request": "launch",

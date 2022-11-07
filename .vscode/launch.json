@@ -14,7 +14,7 @@
             "args": ["--link","https://www.apartments.com/403-west-raleigh-nc/4n6l61k/"]
         },
         {
-            "name": "Link Only - non apartment.com",
+            "name": "Link Only - Incompatible",
             "type": "python",
             "request": "launch",
             "program": "${file}",

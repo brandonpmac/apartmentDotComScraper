@@ -5,9 +5,7 @@ import requests
 from datetime import datetime
         
 def main():
-    with open(os.path.abspath('./403Data.html'),'r') as f:
-        rawData = f.read()
-    parseHtml(rawData)
+    parseHtml('https://www.apartments.com/403-west-raleigh-nc/4n6l61k/')
 
 def parseHtml(link) -> dict:
     # Defining the headers for the html request

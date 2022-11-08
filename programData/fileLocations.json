@@ -1,5 +1,6 @@
 {
     "sharedDirPath": "/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files",
     "apartmentLinksFilepath": "apartmentLinks.txt",
-    "apartmentsDataFilepath": "apartmentsData.json"
+    "apartmentsDataFilepath": "apartmentsData.json",
+    "sharedDirrPath": "/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files"
 }

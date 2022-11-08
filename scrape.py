@@ -16,7 +16,7 @@ def main():
     parser.add_argument(
         '-l',   
         '--link',
-        type=list,                   # Input type
+        type=str,                   # Input type
         required=False,             # Making optional
         help='Adds link to apartmentLinks.txt and appends data to apartmentsData.json'
         )
@@ -25,7 +25,7 @@ def main():
     parser.add_argument(
         '-r',
         '--remove',
-        type=list,
+        type=str,
         required=False,
         help='Removes the included links from the program.'
         )
@@ -72,22 +72,28 @@ def main():
 
     # Add link to shared file
 
+    # ############### ACTIONS ###############
+    # ---------- Args.link ----------
     if args.link != None:
-        link = args.link
-        parsedLink = urllib.parse.urlparse(link)       # Parsing the link to get the network location
-        if parsedLink.netloc != 'www.apartments.com':       # If the link is not located at apartments.com, raise an exception
-            raise Exception('Error: Incompatible Link')
+        inputLink = args.link  # Getting the list of links from input
         
-        # Open the url txt file and read all the lines
-        with open(ulrFilePath) as f:
-            lines = f.readlines()
+        # Getting the existing links from file
+        with open(ulrFilePath) as f:    
+                existingLinks = f.readlines()
 
-        if link in lines:
-            print
+        # Checking to see if the link is valid
+        #   - If not, raise an exception
+        parsedLink = urllib.parse.urlparse(inputLink)       # Parsing the link to get the network location
+        if parsedLink.netloc != 'www.apartments.com':       # If the link is not located at apartments.com, raise an exception
+            raise Exception('Error, incompatable link')
 
-        print(lines)
+        # Checking to see if the input link is in the existing links
+        #   - If not, append to existing links file
+        if inputLink not in existingLinks:
+            with open(ulrFilePath,'a') as f:
+                f.writelines(''.join([inputLink,'\n']))
 
-    # If update was specified
+    # ---------- Args.update ----------
     if args.update == 'yes':
         updateSheet()
     

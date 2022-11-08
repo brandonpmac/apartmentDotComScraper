@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--link","[https://www.apartments.com/403-west-raleigh-nc/4n6l61k/]"]
+            "args": ["--link","https://www.apartments.com/403-west-raleigh-nc/4n6l61k/"]
         },
         {
             "name": "Link Only - The Franklin at Crossroads",
@@ -20,7 +20,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--link","[https://www.apartments.com/the-franklin-at-crossroads-raleigh-nc/h1gzdt2/]"]
+            "args": ["--link","https://www.apartments.com/the-franklin-at-crossroads-raleigh-nc/h1gzdt2/"]
         },
         {
             "name": "Link Only - Incompatible",
@@ -29,7 +29,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--link","[https://docs.python.org/3/library/typing.html]"]
+            "args": ["--link","https://docs.python.org/3/library/typing.html"]
         },
         {
             "name": "Update Only",

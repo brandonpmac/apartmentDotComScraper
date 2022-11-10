@@ -11,14 +11,20 @@ class apartment():
 
         # Getting apartmentClassPointers
         with open(classPointerFilepath,'r') as f:
-            pointers = json.load(f)
+            self.pointers = json.load(f)
         
         # Getting the data to parse through from website
-        data = self.scrapeLink(self.link)
+        self.data = self.scrapeLink(self.link)
 
         # Defining the address
-        self.Address =  self.clean(self.findData('Address',data,pointers))  
-        self.City =     self.clean(self.findData('City',data,pointers))  
+        self.Address =  self.findData('Address')
+        self.City =     self.findData('City')
+        self.State =    self.findData('State')
+        self.Zip =      self.findData('Zip')
+
+        # Getting rid of the data cause I don't want it stored in the class
+        del self.data
+        del self.pointers
 
     def scrapeLink(self,link):
         """Inputs"""
@@ -30,16 +36,16 @@ class apartment():
         htmlText = requests.get(link,timeout=5,headers=HEADERS).text    # Getting the html data from apartments.com
         return htmlText.split('\n')
 
-    def findData(self,key,data,pointers):
+    def findData(self,key):
         # Defining the flag
-        flag = pointers[key]
+        flag = self.pointers[key]
         # create a list of the row of each occurance of the specified pointer in the data
-        position = [i for i,row in enumerate(data) if flag[0] in row]
+        position = [i for i,row in enumerate(self.data) if flag[0] in row]
         
         if len(position) == 1:
-            return data[position[0]+flag[1]]
+            return clean(self.data[position[0]+flag[1]])
 
-    def clean(self,rawString):
+def clean(rawString):
         """Cleans the data from bad formating"""
         soup = BeautifulSoup(rawString, 'html.parser')
         return soup.find_all()[0].text

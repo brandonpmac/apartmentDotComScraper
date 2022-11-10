@@ -36,7 +36,7 @@ def main():
         checkFilePath(updatedPath)
 
         # Updating fileLocationsData with correct filepath
-        fileLocationsData['sharedDirrPath'] = updatedPath
+        fileLocationsData['sharedDirPath'] = updatedPath
 
         # writing the new data to fileLocations.json
         with open(fileLocationsFilepath,'w') as f:
@@ -49,16 +49,18 @@ def main():
     sharedDir = os.path.abspath(fileLocationsData['sharedDirPath'])
     apartmentLinksFilepath = os.path.join(sharedDir,fileLocationsData['apartmentLinksFilepath'])
     apartmentsDataFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsDataFilepath'])
+    apartmentsClasPointerFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsClassPointerPath'])
 
     # Checking Shared Filepaths
     checkFilePath(sharedDir)
     checkFilePath(apartmentLinksFilepath)
     checkFilePath(apartmentsDataFilepath)
-
+    checkFilePath(apartmentsClasPointerFilepath)
 
     # ############### ACTIONS ###############
-    # ---------- Args.link ----------
-    if args.link != None:
+
+    # If a link to add was given
+    if inputLink != None:
         # Getting the existing links from file
         with open(apartmentLinksFilepath) as f:    
                 existingLinks = f.readlines()
@@ -76,7 +78,7 @@ def main():
                 f.writelines(''.join([inputLink,'\n']))
 
     # ---------- Args.update ----------
-    if args.update == 'yes':
+    if updateApartments == True:
         updateSheet()
     
 # ############### FUNCTIONS ################
@@ -135,15 +137,10 @@ def getArguments() -> argparse.Namespace:
     
     return parser.parse_args()
 
-def scrapeLink(link) -> dict:
-    # Defining the headers for the html request
-    HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
-    }
-    # Pulling data from apartments.com
-    htmlText = requests.get(link,timeout=5,headers=HEADERS).text    # Getting the html data from apartments.com
-    data = htmlText.split('\n')
-    
+def getApartmentDataFromSite(link) -> dict:
+   
+    data = scrapeLink(link)
+
     # Defining the Dictionary for data to be stored
     apartment = {
         'Address' :         '',
@@ -177,9 +174,11 @@ def scrapeLink(link) -> dict:
         if 'class="neighborhoodAddress"' in row:
             apartment['Neighboorhood'] =  formatHtml(data[i+2]).split('/')    # Neighborhood
 
+        # Getting the Latitude
         if 'place:location:latitude' in row:
             apartment['Latitude'] = formatListing(data[i])
 
+        # Getting the Longitude
         if 'place:location:longitude' in row:
             apartment['Longitude'] = formatListing(data[i])
 
@@ -289,6 +288,15 @@ def checkFilePath(filePath,fileDir='None'):
 
 def updateSheet():
     pass
+
+def scrapeLink(link) -> list:
+     # Defining the headers for the html request
+    HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
+    }
+    # Pulling data from apartments.com
+    htmlText = requests.get(link,timeout=5,headers=HEADERS).text    # Getting the html data from apartments.com
+    return htmlText.split('\n')
 
 if __name__ == "__main__":
     main()

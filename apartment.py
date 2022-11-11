@@ -21,6 +21,16 @@ class apartment():
         self.City =     self.findData('City')
         self.State =    self.findData('State')
         self.Zip =      self.findData('Zip')
+        self.Neighboorhood = self.findData('Neighboorhood')
+        self.Full_Address = f'{self.Address}, {self.City}, {self.State} {self.Zip}'
+
+        # Defining Lattitude and Longitude
+        self.Latitude = self.findData('Latitude')
+        self.Longitude = self.findData('Longitude')
+
+        # Ratings
+        self.Rating = self.findData('Rating')
+        self.Number_of_Reviews = self.findData('Num of Reviews')
 
         # Getting rid of the data cause I don't want it stored in the class
         del self.data

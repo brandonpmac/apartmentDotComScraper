@@ -29,8 +29,12 @@ class apartment():
         self.Longitude = self.findData('Longitude')
 
         # Ratings
-        self.Rating = self.findData('Rating')
+        self.Rating = self.findData('Review Rating')
         self.Number_of_Reviews = self.findData('Num of Reviews')
+
+        # Models
+        self.Listings = []
+        self.findModels()
 
         # Getting rid of the data cause I don't want it stored in the class
         del self.data
@@ -49,20 +53,33 @@ class apartment():
     def findData(self,key):
         # Defining the flag
         flag = self.pointers[key]
+
         # create a list of the row of each occurance of the specified pointer in the data
         position = [i for i,row in enumerate(self.data) if flag[0] in row]
-        
+        foundData = []
         if len(position) == 1:
             return clean(self.data[position[0]+flag[1]])
+        else:
+            for i in position:
+                foundData.append(clean(self.data[i+flag[1]]))
+            return foundData
+    def findModels(self):
+        self.findData('Model Name')
+        print('test')
 
 def clean(rawString):
         """Cleans the data from bad formating"""
         soup = BeautifulSoup(rawString, 'html.parser')
-        return soup.find_all()[0].text
+        if soup.find_all() != []:
+            return soup.find_all()[0].text
+        else:
+            return rawString
 
 def main():
     apt = apartment('https://www.apartments.com/the-franklin-at-crossroads-raleigh-nc/h1gzdt2/','/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files/dataFiles/apartmentClassPointer.json')
     print(apt.link)
+    with open('./dumped.json','w') as f:
+        f.write(json.dumps(apt.__dict__, indent=4))
 
 if __name__ == "__main__":
     main()

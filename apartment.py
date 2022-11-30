@@ -33,6 +33,7 @@ class Apartment():
         #####################   
 
         # Defining the address
+        self.name              = self.find_data('Name').split(' - ')[0].replace('\t','')
         self.address           = self.find_data('Address')
         self.city              = self.find_data('City')
         self.state             = self.find_data('State')
@@ -115,6 +116,8 @@ class Apartment():
         del self.data
         del self.pointers
 
+        
+
     def scrape_link(self,link):
         """Gets the data from apartments.com using an inputed link."""
          # Defining the headers for the html request
@@ -137,6 +140,17 @@ class Apartment():
         elif len(flag) == 1:
             return clean(self.data[line+flag[0]])
 
+    def return_data(self):
+        retrun_dictionary = {
+            'Name'          : self.name,
+            'Address'       : self.full_address,
+            'Neighboorhood' : self.neighboorhood,
+            'Rating'        : self.rating,
+            'Reviews'       : self.number_of_reviews,
+            'Listings'      : self.listings
+        }
+
+        return retrun_dictionary
 
 def clean(rawString):
         """Cleans the data from bad formating"""

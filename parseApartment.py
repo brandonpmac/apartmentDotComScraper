@@ -2,9 +2,11 @@ import math
 import re
 import requests
 from datetime import datetime
+import apartment
         
 def main():
-    parseHtml('https://www.apartments.com/403-west-raleigh-nc/4n6l61k/')
+    new_apartment = apartment.Apartment('https://www.apartments.com/403-west-raleigh-nc/4n6l61k/','/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files/dataFiles/apartmentClassPointer.json')
+    print(new_apartment.return_data())
 
 def parseHtml(link) -> dict:
     # Defining the headers for the html request

@@ -7,6 +7,9 @@ import re
 import requests
 from datetime import datetime
 import json
+from apartment import Apartment
+import tqdm
+import time
 
 def main():
     # ############### INITIALIZATION ###############
@@ -15,11 +18,11 @@ def main():
     args = getArguments()
 
     # Assigning args to variables
-    inputLink =         args.link
-    removeLink =        args.remove
-    newSharedPath =      args.setup
-    updateApartments =  args.update
-    writeToExcel =      args.write
+    inputLink        = args.link
+    removeLink       = args.remove
+    newSharedPath    = args.setup
+    updateApartments = args.update
+    writeToExcel     = args.write
 
     # Defining fileLoactions Path and opening to retrieve data
     fileLocationsFilepath = os.path.abspath('./programData/fileLocations.json')
@@ -49,21 +52,25 @@ def main():
     sharedDir = os.path.abspath(fileLocationsData['sharedDirPath'])
     apartmentLinksFilepath = os.path.join(sharedDir,fileLocationsData['apartmentLinksFilepath'])
     apartmentsDataFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsDataFilepath'])
-    apartmentsClasPointerFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsClassPointerPath'])
+    apartmentsClassPointerFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsClassPointerPath'])
 
     # Checking Shared Filepaths
     checkFilePath(sharedDir)
     checkFilePath(apartmentLinksFilepath)
     checkFilePath(apartmentsDataFilepath)
-    checkFilePath(apartmentsClasPointerFilepath)
+    checkFilePath(apartmentsClassPointerFilepath)
 
     # ############### ACTIONS ###############
 
-    # If a link to add was given
+    # ---------- Args.link ----------
     if inputLink != None:
         # Getting the existing links from file
         with open(apartmentLinksFilepath) as f:    
-                existingLinks = f.readlines()
+            existing_links = f.readlines()
+        
+        # Removing \n from the string
+        for i,link in enumerate(existing_links):
+            existing_links[i] = link.replace('\n','')
 
         # Checking to see if the link is valid
         #   - If not, raise an exception
@@ -73,14 +80,53 @@ def main():
 
         # Checking to see if the input link is in the existing links
         #   - If not, append to existing links file
-        if inputLink not in existingLinks:
+        if inputLink not in existing_links:
             with open(apartmentLinksFilepath,'a') as f:
                 f.writelines(''.join([inputLink,'\n']))
+            
+            new_apartment = Apartment(inputLink,apartmentsClassPointerFilepath)
+
+            with open(apartmentsDataFilepath,'r') as f:
+                previous_data = json.load(f)
+
+            previous_data.append(new_apartment.return_data())
+
+            with open(apartmentsDataFilepath,'w') as f:
+                json.dump(previous_data,f,indent=4)   # Printing Data to json
+            print('\nLink was succesfully added.\n')
+        else:
+            print('\nLink was already entered into the program.\n')
 
     # ---------- Args.update ----------
     if updateApartments == True:
-        updateSheet()
-    
+        # Getting the existing links from file
+        with open(apartmentLinksFilepath) as f:    
+            existing_links = f.readlines()
+        
+        # Removing \n from the string
+        for i,link in enumerate(existing_links):
+            existing_links[i] = link.replace('\n','')
+        
+        # Iteration
+        update_data = []
+        print()
+        print('Updating Links')
+        for i in tqdm.trange(len(existing_links)):
+            # Only sleeping if not the first request
+            if i>=1:
+                time.sleep(2)
+
+            current_link = existing_links[i]
+            current_apartment = Apartment(current_link,apartmentsClassPointerFilepath)
+
+            update_data.append(current_apartment.return_data())
+        
+        with open(apartmentsDataFilepath,'w') as f:
+            json.dump(update_data,f,indent=4)
+        
+        print()
+        print('Apartments successfully updated.\n')
+
 # ############### FUNCTIONS ################
 
 # Function returns command line arguments
@@ -137,139 +183,6 @@ def getArguments() -> argparse.Namespace:
     
     return parser.parse_args()
 
-def getApartmentDataFromSite(link) -> dict:
-   
-    data = scrapeLink(link)
-
-    # Defining the Dictionary for data to be stored
-    apartment = {
-        'Address' :         '',
-        'City' :            '',
-        'State':            '',
-        'Zip':              '',
-        'Latitude':        '',
-        'Longitude':        '',
-        'Neighboorhood':    '',
-        'Rating':           '',
-        'Num of Reviews':   '',
-        'Listing':          [],
-        'Garmin Time':      '',
-        'Partners Time':    ''
-    }
-
-    # Searching through the data to check for keys
-    for i,row in enumerate(data):
-        # ----- Parsing Address -----
-        # Getting Address and City
-        if 'propertyAddressContainer' in row:           
-            apartment['Address'] =        formatHtml(data[i+2])               # Address
-            apartment['City'] =           formatHtml(data[i+3])               # City
-
-        # Getting the State and Zip Data
-        if 'stateZipContainer' in row:
-            apartment['State'] =          formatHtml(data[i+1])               # State
-            apartment['Zip'] =            formatHtml(data[i+2])               # Zip Code
-
-        # Getting the Neighborhood
-        if 'class="neighborhoodAddress"' in row:
-            apartment['Neighboorhood'] =  formatHtml(data[i+2]).split('/')    # Neighborhood
-
-        # Getting the Latitude
-        if 'place:location:latitude' in row:
-            apartment['Latitude'] = formatListing(data[i])
-
-        # Getting the Longitude
-        if 'place:location:longitude' in row:
-            apartment['Longitude'] = formatListing(data[i])
-
-        # Getting the Review Data
-        if 'class="reviewRating"' in row:
-            apartment['Rating'] =         formatHtml(data[i])                 # Raiting
-        if 'class="reviewCount"' in row:
-            apartment['Num of Reviews'] = re.sub('\D','',formatHtml(data[i])) # Number of Reviews - Special fomating to only display Int
-        
-        # Getting the Individual listing data
-        if 'class="unitContainer js-unitContainer' in row:
-            Listing = {
-                'modelName' :     formatListing(data[i+16]),
-                'unit' : [{
-                    'unitNumber' :    formatListing(data[i+17]),    
-                    'rent' :          formatListing(data[i+11]),
-                    'dateAvail' :     formatListing(data[i+39])
-                }],
-                'numberBeds' :    formatListing(data[i+14]),
-                'numberBath' :    formatListing(data[i+15]),
-                'area' :          formatHtml(data[i+33])
-            }
-            found = False
-            for indiv in apartment['Listing']:
-                if Listing['modelName'] == indiv['modelName']:
-                    if Listing['unit'][0] not in indiv['unit']:
-                        indiv['unit'].append(Listing['unit'][0])
-                    found = True
-                    break
-            if found == False:
-                apartment['Listing'].append(Listing)
-    
-    # Formating for getDirections()
-    address = ''.join([
-        apartment['Address'],
-        ', ',
-        apartment['City'],
-        ', ',
-        apartment['State'],
-        ' ',
-        apartment['Zip']])
-    [apartment['Garmin Time'],apartment['Partners Time']] = getDirections(
-        address,
-        apartment['Latitude'],
-        apartment['Longitude']
-        )
-    return apartment
-
-def formatHtml(rawText):
-    rawText = rawText.replace('>','<')
-    splitText = rawText.split('<')
-    text = splitText[math.floor(len(splitText)/2)]
-    return text
-
-def formatListing(rawText):
-    rawText = rawText.split('=')[-1]
-    rawText = rawText.replace('"','')
-    rawText = rawText.replace('    ','')
-    rawText = rawText.replace('>','')
-    rawText = rawText.replace('\r','')
-    return rawText
-        
-def getDirections(address,lat,long):
-
-    coordinates = ''.join(['@',lat,',',long])
-    # chromeDriverPath = os.path.abspath('/opt/homebrew/bin/chromedriver')
-    garminMapsUrl = ''.join(['https://www.google.com/maps/dir/',address,'/Garmin,+12040+Regency+Pkwy,+Cary,+NC+27518/',coordinates])
-    partnersMapUrl = ''.join(['https://www.google.com/maps/dir/',address,'/Partners+Way+Parking+Deck,+Partners+Way,+Raleigh,+NC/',coordinates])
-    mapLinks = [garminMapsUrl,partnersMapUrl]
-
-    # Defining time variables to determine travel time
-    currentTime = datetime.strptime(datetime.strftime(datetime.now(),"%I:%M %p"),"%I:%M %p")    # Getting the current time without the assiciated year (pardon the weird formating)
-    travelTimes = []                                                    # Shortest travel times for Garmin and Partners
-    for i, link in enumerate(mapLinks):
-        # Defining the header for the html request
-        HEADERS = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
-        }
-        htmlText = requests.get(link,timeout=10,headers=HEADERS).text   # Getting the html source from google maps for the current route
-        data = htmlText.split('\n')                                     # Splitting the html by new line
-
-        timeLocations = [m.start() for m in re.finditer('You should arrive around', data[15])]  # Indecies for where the time data is located
-        times = []  # List of all times calculated from google maps
-        for loc in timeLocations:
-            newTimeStr = data[15][loc+25:loc+33].replace('.','')    # Get the time data from the html code, with formating
-            newTime = datetime.strptime(newTimeStr,"%I:%M %p")      # Convert the time date to a time object
-            timeDiff = newTime-currentTime                          # Get the time difference between the current time and time data
-            times.append(timeDiff.seconds/60)                       # Append the time difference, converting to min and a string
-        travelTimes.append(min(times))                              # Appending the shortest time
-    return travelTimes                                              # Returning the travel times  
-
 def checkFilePath(filePath,fileDir='None'):
     convertedFilePath = os.path.abspath(filePath)   # Converting the path to absolute path
     fileName = os.path.split(convertedFilePath)[1]  # Getting the file name from converted path
@@ -283,20 +196,6 @@ def checkFilePath(filePath,fileDir='None'):
     # Checking to see if the file exists
     if not os.path.exists(convertedFilePath):
         raise FileNotFoundError(errorPrompt)
-    
-
-
-def updateSheet():
-    pass
-
-def scrapeLink(link) -> list:
-     # Defining the headers for the html request
-    HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36',
-    }
-    # Pulling data from apartments.com
-    htmlText = requests.get(link,timeout=5,headers=HEADERS).text    # Getting the html data from apartments.com
-    return htmlText.split('\n')
 
 if __name__ == "__main__":
     main()

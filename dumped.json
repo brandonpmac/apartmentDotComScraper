@@ -1,14 +1,285 @@
 {
     "link": "https://www.apartments.com/the-franklin-at-crossroads-raleigh-nc/h1gzdt2/",
-    "Address": "6010 Attleboro Dr",
-    "City": "Raleigh",
-    "State": "NC",
-    "Zip": "27606",
-    "Neighboorhood": "Cary Crossroads/Apex",
-    "Full_Address": "6010 Attleboro Dr, Raleigh, NC 27606",
-    "Latitude": "",
-    "Longitude": "",
-    "Rating": "4.2",
-    "Number_of_Reviews": "(36 reviews)",
-    "Listings": []
+    "address": "6010 Attleboro Dr",
+    "city": "Raleigh",
+    "state": "NC",
+    "zip": "27606",
+    "neighboorhood": "Cary Crossroads/Apex",
+    "latitude": "",
+    "longitude": "",
+    "rating": "4.2",
+    "number_of_reviews": "(36 reviews)",
+    "full_address": "6010 Attleboro Dr, Raleigh, NC 27606",
+    "listings": [
+        {
+            "Model Name": "A4",
+            "Unit Number": "4424",
+            "Rent": "1563",
+            "Date Availible": "Dec. 10",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "740"
+        },
+        {
+            "Model Name": "A2",
+            "Unit Number": "4116",
+            "Rent": "1498",
+            "Date Availible": "Dec. 23",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "711"
+        },
+        {
+            "Model Name": "A2",
+            "Unit Number": "8406",
+            "Rent": "1532",
+            "Date Availible": "Jan. 15, 2023",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "711"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "8223",
+            "Rent": "1774",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "8423",
+            "Rent": "1832",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "4111",
+            "Rent": "1871",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "4407",
+            "Rent": "1911",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "8420",
+            "Rent": "1927",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "8108",
+            "Rent": "1868",
+            "Date Availible": "Dec. 27",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "4321",
+            "Rent": "1829",
+            "Date Availible": "Feb. 7, 2023",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "C3",
+            "Unit Number": "4305",
+            "Rent": "2244",
+            "Date Availible": "Now",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,504"
+        },
+        {
+            "Model Name": "C3",
+            "Unit Number": "8105",
+            "Rent": "2321",
+            "Date Availible": "Jan. 27, 2023",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,504"
+        },
+        {
+            "Model Name": "C2",
+            "Unit Number": "8111",
+            "Rent": "2301",
+            "Date Availible": "Now",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        },
+        {
+            "Model Name": "C1",
+            "Unit Number": "4126",
+            "Rent": "2290",
+            "Date Availible": "Dec. 9",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        },
+        {
+            "Model Name": "C1",
+            "Unit Number": "4226",
+            "Rent": "2246",
+            "Date Availible": "Jan. 8, 2023",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        },
+        {
+            "Model Name": "A4",
+            "Unit Number": "4424",
+            "Rent": "1563",
+            "Date Availible": "Dec. 10",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "740"
+        },
+        {
+            "Model Name": "A2",
+            "Unit Number": "4116",
+            "Rent": "1498",
+            "Date Availible": "Dec. 23",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "711"
+        },
+        {
+            "Model Name": "A2",
+            "Unit Number": "8406",
+            "Rent": "1532",
+            "Date Availible": "Jan. 15, 2023",
+            "Number of Beds": "1",
+            "Number of Baths": "1",
+            "Area": "711"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "8223",
+            "Rent": "1774",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "8423",
+            "Rent": "1832",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "4111",
+            "Rent": "1871",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B3",
+            "Unit Number": "4407",
+            "Rent": "1911",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,056"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "8420",
+            "Rent": "1927",
+            "Date Availible": "Now",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "8108",
+            "Rent": "1868",
+            "Date Availible": "Dec. 27",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "B2",
+            "Unit Number": "4321",
+            "Rent": "1829",
+            "Date Availible": "Feb. 7, 2023",
+            "Number of Beds": "2",
+            "Number of Baths": "2",
+            "Area": "1,046"
+        },
+        {
+            "Model Name": "C3",
+            "Unit Number": "4305",
+            "Rent": "2244",
+            "Date Availible": "Now",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,504"
+        },
+        {
+            "Model Name": "C3",
+            "Unit Number": "8105",
+            "Rent": "2321",
+            "Date Availible": "Jan. 27, 2023",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,504"
+        },
+        {
+            "Model Name": "C2",
+            "Unit Number": "8111",
+            "Rent": "2301",
+            "Date Availible": "Now",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        },
+        {
+            "Model Name": "C1",
+            "Unit Number": "4126",
+            "Rent": "2290",
+            "Date Availible": "Dec. 9",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        },
+        {
+            "Model Name": "C1",
+            "Unit Number": "4226",
+            "Rent": "2246",
+            "Date Availible": "Jan. 8, 2023",
+            "Number of Beds": "3",
+            "Number of Baths": "2",
+            "Area": "1,431"
+        }
+    ]
 }

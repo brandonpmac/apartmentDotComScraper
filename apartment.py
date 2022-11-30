@@ -32,7 +32,7 @@ class Apartment():
         # APARTMENT DATA
         #####################   
 
-        # Defining the address
+        # Defining the all the variables found in the script.
         self.name              = self.find_data('Name').split(' - ')[0].replace('\t','')
         self.address           = self.find_data('Address')
         self.city              = self.find_data('City')
@@ -80,8 +80,6 @@ class Apartment():
         #         time.sleep(5)
 
         
-        
-
         #####################
         # LISTINGS
         #####################
@@ -107,16 +105,6 @@ class Apartment():
             for key in return_keys:
                 return_data[key] = self.find_data(key,line)
             self.listings.append(return_data)                # Appending the data
-
-        #####################
-        # CLEANUP
-        #####################
-
-        # Getting rid of the data cause I don't want it stored in the class
-        del self.data
-        del self.pointers
-
-        
 
     def scrape_link(self,link):
         """Gets the data from apartments.com using an inputed link."""

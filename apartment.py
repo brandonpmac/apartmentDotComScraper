@@ -43,41 +43,9 @@ class Apartment():
         self.longitude         = self.find_data('Longitude')
         self.rating            = self.find_data('Review Rating')
         self.number_of_reviews = self.find_data('Num of Reviews')
-        # self.travel_times      = {}
 
         # Formating found data into new varibales
         self.full_address =  f'{self.address}, {self.city}, {self.state} {self.zip}'  
-
-
-        #####################
-        # TRAVEL TIMES
-        #####################
-
-        # current_time = datetime.strptime(datetime.strftime(datetime.now(),"%I:%M %p"),"%I:%M %p")
-
-        # for i,address in enumerate(self.pointers['Travel Addresses']):
-        #     if i >=1:
-        #         formatted_address = address.replace(' ','+')
-        #         travel_link = '/'.join([
-        #             'https://www.google.com/maps/dir',
-        #             self.address.replace(' ','+'),
-        #             formatted_address
-        #         ])
-                
-        #         travel_data = self.scrape_link(travel_link)
-        #         time_locations = [m.start() for m in re.finditer(self.pointers['Travel Addresses'][0], travel_data[15])]
-                
-        #         found_times = []
-
-        #         for found_time in time_locations:
-        #             new_time_string = travel_data[15][found_time+25:found_time+33]
-        #             new_time_string = new_time_string.replace('.','')
-        #             new_time = datetime.strptime(new_time_string,"%I:%M %p")
-        #             time_difference = new_time-current_time
-        #             found_times.append(time_difference.seconds/60)
-                
-        #         self.travel_times[self.pointers['Travel Names'][i]] = min(found_times)
-        #         time.sleep(5)
 
         
         #####################
@@ -85,7 +53,8 @@ class Apartment():
         #####################
 
         # Finds all occurances of a listing in the scrapped data.
-        self.listings = []
+        self.raw_listings = []
+        self.net_listings = {}
         listing_indicies = [i for i, line in enumerate(self.data) if line.__contains__(self.pointers['Listing'][0])]
         
         # Defining the keys to search for in each listing
@@ -104,7 +73,33 @@ class Apartment():
             return_data = {}
             for key in return_keys:
                 return_data[key] = self.find_data(key,line)
-            self.listings.append(return_data)                # Appending the data
+            self.raw_listings.append(return_data)                # Appending the data
+        
+        # Reformating the data
+        for listing in self.raw_listings:
+            model_name = listing['Model Name']
+            if model_name in list(self.net_listings.keys()):
+                self.net_listings[model_name]['Listings'].append(
+                    {
+                        'Units'           : listing['Unit Number'],
+                        'Rent'            : listing['Rent'],
+                        'Date Availible'  : listing['Date Availible']
+                    }
+                )
+            else:
+                self.net_listings[model_name] = {
+                    # Assuming the number of beds, baths, and area will be the same
+                    'Number of Beds'  : listing['Number of Beds'],
+                    'Number of Baths' : listing['Number of Baths'],
+                    'Area'            : listing['Area'],
+                    'Listings'        : [{
+                        'Units'           : listing['Unit Number'],
+                        'Rent'            : listing['Rent'],
+                        'Date Availible'  : listing['Date Availible']
+                    }]
+                }
+                
+
 
     def scrape_link(self,link):
         """Gets the data from apartments.com using an inputed link."""
@@ -135,7 +130,7 @@ class Apartment():
             'Neighboorhood' : self.neighboorhood,
             'Rating'        : self.rating,
             'Reviews'       : self.number_of_reviews,
-            'Listings'      : self.listings
+            'Listings'      : self.net_listings
         }
 
         return retrun_dictionary

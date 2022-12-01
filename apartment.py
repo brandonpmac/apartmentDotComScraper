@@ -1,23 +1,13 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-import time
-import re
-from datetime import datetime
-import math
+
 
 class Apartment():
-    """Generates an object with data parsed from an inputed link
-    
-    Functions:
-        __init__():
-
-        returnData():
-    """
-
+    """Generates an object with data parsed from an inputed link"""
 
     def __init__(self,link,classPointerFilepath) -> None:
-        """Generates an object with data parsed from an inputed link"""
+
         # Defining the apartment link
         self.link = link
 
@@ -33,16 +23,17 @@ class Apartment():
         #####################   
 
         # Defining the all the variables found in the script.
-        self.name              = self.find_data('Name').split(' - ')[0].replace('\t','')
-        self.address           = self.find_data('Address')
-        self.city              = self.find_data('City')
-        self.state             = self.find_data('State')
-        self.zip               = self.find_data('Zip')
-        self.neighboorhood     = self.find_data('Neighboorhood')
-        self.latitude          = self.find_data('Latitude')
-        self.longitude         = self.find_data('Longitude')
-        self.rating            = self.find_data('Review Rating')
-        self.number_of_reviews = self.find_data('Num of Reviews')
+        self.name              = self.find_data('Name')             # Apartment Name
+        self.address           = self.find_data('Address')          # Apartment Street address
+        self.city              = self.find_data('City')             # Apartment City
+        self.state             = self.find_data('State')            # Apartment State
+        self.zip               = self.find_data('Zip')              # Apartment Zip
+        self.neighboorhood     = self.find_data('Neighboorhood')    # Neighboorhood
+        self.rating            = self.find_data('Review Rating')    # Rating from Apartments.com
+        self.number_of_reviews = self.find_data('Num of Reviews')   # Number of Reviews 
+
+        # Special Formating for specific variables
+        self.name = self.name.split(' - ')[0].replace('\t','')
 
         # Formating found data into new varibales
         self.full_address =  f'{self.address}, {self.city}, {self.state} {self.zip}'  
@@ -52,13 +43,18 @@ class Apartment():
         # LISTINGS
         #####################
 
+        # First find all occurances of a listing in the scraped data.  
+        # Then iterate through all occurances to scrape data from html.  
+        # Append them to the the data
+        #
+
         # Finds all occurances of a listing in the scrapped data.
         self.raw_listings = []
-        self.net_listings = {}
+        self.listings = {}
         listing_indicies = [i for i, line in enumerate(self.data) if line.__contains__(self.pointers['Listing'][0])]
         
         # Defining the keys to search for in each listing
-        return_keys = [
+        listing_keys = [
             'Model Name',
             'Unit Number',
             'Rent',
@@ -70,36 +66,32 @@ class Apartment():
 
         # Getting all occurance of a listing and storing the found data in list of dictionaries
         for line in listing_indicies:
-            return_data = {}
-            for key in return_keys:
-                return_data[key] = self.find_data(key,line)
-            self.raw_listings.append(return_data)                # Appending the data
-        
-        # Reformating the data
-        for listing in self.raw_listings:
-            model_name = listing['Model Name']
-            if model_name in list(self.net_listings.keys()):
-                self.net_listings[model_name]['Listings'].append(
+            new_listing = {}
+            for key in listing_keys:
+                new_listing[key] = self.find_data(key,line)
+            
+            model_name = new_listing['Model Name']
+            if model_name in self.listings:
+                self.listings[model_name]['Listings'].append(
                     {
-                        'Units'           : listing['Unit Number'],
-                        'Rent'            : listing['Rent'],
-                        'Date Availible'  : listing['Date Availible']
+                        'Units'           : new_listing['Unit Number'],
+                        'Rent'            : new_listing['Rent'],
+                        'Date Availible'  : new_listing['Date Availible']
                     }
                 )
             else:
-                self.net_listings[model_name] = {
+                self.listings[model_name] = {
                     # Assuming the number of beds, baths, and area will be the same
-                    'Number of Beds'  : listing['Number of Beds'],
-                    'Number of Baths' : listing['Number of Baths'],
-                    'Area'            : listing['Area'],
+                    'Number of Beds'  : new_listing['Number of Beds'],
+                    'Number of Baths' : new_listing['Number of Baths'],
+                    'Area'            : new_listing['Area'],
                     'Listings'        : [{
-                        'Units'           : listing['Unit Number'],
-                        'Rent'            : listing['Rent'],
-                        'Date Availible'  : listing['Date Availible']
+                        'Units'           : new_listing['Unit Number'],
+                        'Rent'            : new_listing['Rent'],
+                        'Date Availible'  : new_listing['Date Availible']
                     }]
                 }
                 
-
 
     def scrape_link(self,link):
         """Gets the data from apartments.com using an inputed link."""
@@ -130,10 +122,11 @@ class Apartment():
             'Neighboorhood' : self.neighboorhood,
             'Rating'        : self.rating,
             'Reviews'       : self.number_of_reviews,
-            'Listings'      : self.net_listings
+            'Listings'      : self.listings
         }
 
         return retrun_dictionary
+
 
 def clean(rawString):
         """Cleans the data from bad formating"""

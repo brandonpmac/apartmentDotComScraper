@@ -2,14 +2,12 @@ import argparse
 import urllib.parse
 import urllib.request
 import os
-import math
-import re
-import requests
-from datetime import datetime
 import json
 from apartment import Apartment
+import apartment
 import tqdm
 import time
+import shlex
 
 def main():
     # ############### INITIALIZATION ###############
@@ -19,6 +17,7 @@ def main():
 
     # Assigning args to variables
     inputLink        = args.link
+    ignoreListing    = args.ignore
     removeLink       = args.remove
     newSharedPath    = args.setup
     updateApartments = args.update
@@ -35,11 +34,19 @@ def main():
     # Detecting if setup was called - This is done first so that the user can continue with the program 
     if newSharedPath != None:
         # Formating the path and checking if it exists
-        updatedPath = os.path.abspath(newSharedPath)
-        checkFilePath(updatedPath)
 
-        # Updating fileLocationsData with correct filepath
-        fileLocationsData['sharedDirPath'] = updatedPath
+        for i,path in enumerate(newSharedPath):
+
+            if path == 'shared':
+                sharedPath = os.path.abspath(newSharedPath[i+1])
+                checkFilePath(sharedPath)
+                fileLocationsData['sharedDirPath'] = sharedPath
+            
+            elif path == 'excel':
+                excel_path = os.path.abspath(newSharedPath[i+1])
+                checkFilePath(excel_path)
+                fileLocationsData['excel_sheet_filepath'] = excel_path
+
 
         # writing the new data to fileLocations.json
         with open(fileLocationsFilepath,'w') as f:
@@ -49,16 +56,21 @@ def main():
     # ############### FILEPATHS ###############
 
     # Defining Shared Filepaths
-    sharedDir = os.path.abspath(fileLocationsData['sharedDirPath'])
-    apartmentLinksFilepath = os.path.join(sharedDir,fileLocationsData['apartmentLinksFilepath'])
-    apartmentsDataFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsDataFilepath'])
+    sharedDir                      = os.path.abspath(fileLocationsData['sharedDirPath'])
+    apartmentLinksFilepath         = os.path.join(sharedDir,fileLocationsData['apartmentLinksFilepath'])
+    apartments_data_filepath       = os.path.join(sharedDir,fileLocationsData['apartmentsDataFilepath'])
     apartmentsClassPointerFilepath = os.path.join(sharedDir,fileLocationsData['apartmentsClassPointerPath'])
+    ignoredListingFilepath         = os.path.join(sharedDir,fileLocationsData['ignoredListingsFilepath'])
+    excel_sheet_filepath           = os.path.abspath(fileLocationsData['excel_sheet_filepath'])
+
 
     # Checking Shared Filepaths
     checkFilePath(sharedDir)
     checkFilePath(apartmentLinksFilepath)
-    checkFilePath(apartmentsDataFilepath)
+    checkFilePath(apartments_data_filepath)
     checkFilePath(apartmentsClassPointerFilepath)
+    checkFilePath(ignoredListingFilepath)
+    checkFilePath(excel_sheet_filepath)
 
     # ############### ACTIONS ###############
 
@@ -83,19 +95,26 @@ def main():
         if inputLink not in existing_links:
             with open(apartmentLinksFilepath,'a') as f:
                 f.writelines(''.join([inputLink,'\n']))
-            
-            new_apartment = Apartment(inputLink,apartmentsClassPointerFilepath)
-
-            with open(apartmentsDataFilepath,'r') as f:
-                previous_data = json.load(f)
-
-            previous_data.append(new_apartment.return_data())
-
-            with open(apartmentsDataFilepath,'w') as f:
-                json.dump(previous_data,f,indent=4)   # Printing Data to json
+        
             print('\nLink was succesfully added.\n')
         else:
             print('\nLink was already entered into the program.\n')
+    
+    # ---------- Args.ignore ----------
+    if ignoreListing != None:
+        with open(ignoredListingFilepath,'r') as f:
+            ignored_links = json.load(f)
+        
+        if len(ignoreListing) != 3:
+            raise Exception('Error, incorrect inputs for --ignore. Please enter only 3 inputs')
+        ignored_links.append({
+            'Apartment' : ignoreListing[0],
+            'Floor Plan' : ignoreListing[1],
+            'Reason' : ignoreListing[2]
+        })
+
+        with open(ignoredListingFilepath,'w') as f:
+            json.dump(ignored_links,f,indent=4)
 
     # ---------- Args.update ----------
     if updateApartments == True:
@@ -110,22 +129,27 @@ def main():
         # Iteration
         update_data = []
         print()
-        print('Updating Links')
+        print('Updating Links\n')
         for i in tqdm.trange(len(existing_links)):
             # Only sleeping if not the first request
             if i>=1:
                 time.sleep(2)
 
             current_link = existing_links[i]
-            current_apartment = Apartment(current_link,apartmentsClassPointerFilepath)
+            current_apartment = Apartment(current_link,apartmentsClassPointerFilepath,ignoredListingFilepath)
 
             update_data.append(current_apartment.return_data())
         
-        with open(apartmentsDataFilepath,'w') as f:
+        with open(apartments_data_filepath,'w') as f:
             json.dump(update_data,f,indent=4)
         
         print()
         print('Apartments successfully updated.\n')
+
+    # ---------- Args.write ----------
+    if writeToExcel == True:
+        apartment.write_to_excel(apartments_data_filepath,excel_sheet_filepath)
+        os.system("open " + shlex.quote(excel_sheet_filepath))
 
 # ############### FUNCTIONS ################
 
@@ -134,6 +158,16 @@ def getArguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Scrapes an apartment.com linkt to add data to a file.')
 
     # ---------- Command Line Arguments ----------
+    # -l, --link:   Link command line argument
+    parser.add_argument(
+        '-i',   
+        '--ignore',
+        type=str,                   # Input type
+        nargs='*',
+        required=False,             # Making optional
+        help='Ignores a listing. format of \'Apartment : Floor Plan : Reason\'.'
+        )
+        
     # -l, --link:   Link command line argument
     parser.add_argument(
         '-l',   
@@ -156,9 +190,9 @@ def getArguments() -> argparse.Namespace:
     parser.add_argument(
         '-s',
         '--setup',
-        type=str,
+        nargs='+',
         required=False,
-        help='Argument that specifies the shared folder path. Only nessescary to run when first installing the program.'
+        help='Argument that specifies the shared folder path. Only nessescary to run when first installing the program. Define with shared or excel'
         )
 
     # -u, --update: Update command line argument

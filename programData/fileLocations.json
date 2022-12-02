@@ -1,6 +1,8 @@
 {
-    "sharedDirPath": "/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files",
+    "sharedDirPath": "/Volumes/GoogleDrive/My Drive/Projects/Apartment Search/Apartment Scraper",
     "apartmentLinksFilepath": "dataFiles/apartmentLinks.txt",
     "apartmentsDataFilepath": "dataFiles/apartmentsData.json",
-    "apartmentsClassPointerPath": "dataFiles/apartmentClassPointer.json"
+    "apartmentsClassPointerPath": "dataFiles/apartmentClassPointer.json",
+    "ignoredListingsFilepath": "dataFiles/ignore.json",
+    "excel_sheet_filepath": "/Users/brandonmcclenathan/Library/CloudStorage/OneDrive-NorthCarolinaStateUniversity/Documents/Projects/Apartment Search.xlsx"
 }

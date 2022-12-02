@@ -55,7 +55,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["--setup","/Users/brandonmcclenathan/Library/Mobile Documents/com~apple~CloudDocs/Documents/Code/apartmentScraper - Shared Files/"]
+            "args": ["--setup","shared", "/Volumes/GoogleDrive/My Drive/Projects/Apartment Search/Apartment Scraper/", "excel", "/Users/brandonmcclenathan/Library/CloudStorage/OneDrive-NorthCarolinaStateUniversity/Documents/Projects/Apartment Search.xlsx"]
         }
     ]
 }
